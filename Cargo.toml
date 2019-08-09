@@ -3,6 +3,15 @@ name = "path-dsl"
 version = "0.1.0"
 authors = ["Connor Fitzgerald <connorwadefitzgerald@gmail.com>"]
 edition = "2018"
+license = "MIT"
+homepage = "https://github.com/cwfitzgerald/path-dsl-rs"
+repository = "https://github.com/cwfitzgerald/path-dsl-rs"
+description = "A utility DSL and macro to help deal with Paths and PathBufs."
+
+exclude = [
+    ".gitignore",
+    ".rustfmt.toml",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
