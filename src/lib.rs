@@ -13,6 +13,8 @@ use std::borrow::Cow;
 use std::ffi::OsString;
 use std::ops::{Deref, DerefMut, Div};
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
+use std::sync::Arc;
 
 /// A PathBuf wrapper that has support for a Path DSL.
 ///
@@ -29,6 +31,14 @@ pub struct PathDSL {
 impl PathDSL {
     pub fn new() -> Self {
         PathDSL { path: PathBuf::new() }
+    }
+
+    pub fn into_os_string(self) -> OsString {
+        self.path.into_os_string()
+    }
+
+    pub fn into_boxed_path(self) -> Box<Path> {
+        self.path.into_boxed_path()
     }
 }
 
@@ -112,6 +122,47 @@ impl From<Cow<'_, Path>> for PathDSL {
         PathDSL {
             path: PathBuf::from(other),
         }
+    }
+}
+
+//////////
+// Into //
+//////////
+// We can't implement from on these types, so the best we can do is Into.
+
+impl Into<OsString> for PathDSL {
+    fn into(self) -> OsString {
+        self.into_os_string()
+    }
+}
+
+impl Into<Box<Path>> for PathDSL {
+    fn into(self) -> Box<Path> {
+        self.into_boxed_path()
+    }
+}
+
+impl<'a> Into<Cow<'a, Path>> for PathDSL {
+    fn into(self) -> Cow<'a, Path> {
+        self.path.into()
+    }
+}
+
+impl<'a> Into<Cow<'a, Path>> for &'a PathDSL {
+    fn into(self) -> Cow<'a, Path> {
+        Cow::Borrowed(self.path.as_path())
+    }
+}
+
+impl<'a> Into<Arc<Path>> for PathDSL {
+    fn into(self) -> Arc<Path> {
+        self.path.into()
+    }
+}
+
+impl<'a> Into<Rc<Path>> for PathDSL {
+    fn into(self) -> Rc<Path> {
+        self.path.into()
     }
 }
 
@@ -293,5 +344,6 @@ mod test {
     fn dsl_osstring_ref() {
         let value = OsString::from("folder");
         let dsl = &PathDSL::new() / &value;
+        let bp: Box<Path> = dsl.into();
     }
 }
