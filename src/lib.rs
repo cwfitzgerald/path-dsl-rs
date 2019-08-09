@@ -541,23 +541,28 @@ mod test {
         let value: &str = "folder";
         let dsl = PathDSL::new() / value;
     }
+    #[test]
     fn dsl_string() {
         let value = String::from("folder");
         let dsl = PathDSL::new() / value;
     }
+    #[test]
     fn dsl_string_ref() {
         let value = String::from("folder");
         let dsl = PathDSL::new() / &value;
     }
+    #[test]
     fn dsl_osstr() {
         let value_owned = OsString::from("folder");
         let value: &OsStr = &value_owned;
         let dsl = PathDSL::new() / value;
     }
+    #[test]
     fn dsl_osstring() {
         let value = OsString::from("folder");
         let dsl = PathDSL::new() / value;
     }
+    #[test]
     fn dsl_osstring_ref() {
         let value = OsString::from("folder");
         let dsl = &PathDSL::new() / &value;
