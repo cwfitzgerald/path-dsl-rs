@@ -174,8 +174,12 @@ impl Div<PathDSL> for PathDSL {
     type Output = PathDSL;
 
     fn div(mut self, rhs: PathDSL) -> Self::Output {
-        self.path.push(rhs);
-        self
+        if self.path.as_os_str().is_empty() {
+            Self::from(rhs)
+        } else {
+            self.path.push(rhs);
+            self
+        }
     }
 }
 
@@ -195,8 +199,12 @@ impl Div<OsString> for PathDSL {
     type Output = PathDSL;
 
     fn div(mut self, rhs: OsString) -> Self::Output {
-        self.path.push(rhs);
-        self
+        if self.path.as_os_str().is_empty() {
+            Self::from(rhs)
+        } else {
+            self.path.push(rhs);
+            self
+        }
     }
 }
 
@@ -204,8 +212,12 @@ impl Div<String> for PathDSL {
     type Output = PathDSL;
 
     fn div(mut self, rhs: String) -> Self::Output {
-        self.path.push(rhs);
-        self
+        if self.path.as_os_str().is_empty() {
+            Self::from(rhs)
+        } else {
+            self.path.push(rhs);
+            self
+        }
     }
 }
 
@@ -213,8 +225,12 @@ impl Div<PathBuf> for PathDSL {
     type Output = PathDSL;
 
     fn div(mut self, rhs: PathBuf) -> Self::Output {
-        self.path.push(rhs);
-        self
+        if self.path.as_os_str().is_empty() {
+            Self::from(rhs)
+        } else {
+            self.path.push(rhs);
+            self
+        }
     }
 }
 
