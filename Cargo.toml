@@ -1,12 +1,13 @@
 [package]
 name = "path-dsl"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Connor Fitzgerald <connorwadefitzgerald@gmail.com>"]
 edition = "2018"
 license = "MIT"
 homepage = "https://github.com/cwfitzgerald/path-dsl-rs"
 repository = "https://github.com/cwfitzgerald/path-dsl-rs"
 description = "A utility DSL and macro to help deal with Paths and PathBufs."
+documentation = "https://docs.rs/path-dsl/"
 
 exclude = [
     ".gitignore",
