@@ -587,26 +587,115 @@ impl Div<Cow<'_, OsStr>> for &PathDSL {
     }
 }
 
-#[macro_export]
+#[cfg(windows)]
+macro_rules! separator {
+    () => { "\\" };
+}
+
+#[cfg(not(windows))]
+macro_rules! separator {
+    () => { "/" };
+}
+
+macro_rules! concat_separator {
+    ( $e:literal, $($other:literal),+ ) => {
+        concat!($e, separator!(), concat_separator!($($other),+))
+    };
+    ( $e:literal ) => {
+        $e
+    }
+}
+
+macro_rules! path_impl {
+    ( @($($stack:expr),*)@ ($exp:expr) | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / $exp)@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ ($exp:expr) ) => {
+        $($stack),* / $exp
+    };
+    ( @($($stack:expr),*)@ $blk:block | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / $blk)@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $blk:block ) => {
+        $($stack),* / $blk
+    };
+    ( @($($stack:expr),*)@ $name:path | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / $name)@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $name:path ) => {
+        $($stack),* / $name
+    };
+    ( @($($stack:expr),*)@ &$name:path | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / &$name)@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ &$name:path ) => {
+        $($stack),* / &$name
+    };
+    ( @($($stack:expr),*)@ &mut $name:path | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / &mut $name)@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ &mut $name:path ) => {
+        $($stack),* / &mut $name
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $lit11:literal | $lit12:literal | $lit13:literal | $lit14:literal | $lit15:literal | $lit16:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10, $lit11, $lit12, $lit13, $lit14, $lit15, $lit16))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $lit11:literal | $lit12:literal | $lit13:literal | $lit14:literal | $lit15:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10, $lit11, $lit12, $lit13, $lit14, $lit15))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $lit11:literal | $lit12:literal | $lit13:literal | $lit14:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10, $lit11, $lit12, $lit13, $lit14))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $lit11:literal | $lit12:literal | $lit13:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10, $lit11, $lit12, $lit13))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $lit11:literal | $lit12:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10, $lit11, $lit12))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $lit11:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10, $lit11))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal | $lit10:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9, $lit10))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $lit9:literal| $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8, $lit9))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $lit8:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7, $lit8))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $lit7:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6, $lit7))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $lit6:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5, $lit6))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $lit5:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4, $lit5))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $lit4:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3, $lit4))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $lit3:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2, $lit3))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $lit2:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / concat_separator!($lit, $lit2))@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal | $($other:tt)+ ) => {
+        path_impl!( @($($stack),* / $lit)@ $($other)+ )
+    };
+    ( @($($stack:expr),*)@ $lit:literal ) => {
+        $($stack),* / $lit
+    };
+    ( @($($stack:expr),*)@ ) => {
+        $($stack),*
+    };
+}
+
 macro_rules! path {
-    ( @@ $lit:literal / $lit2:literal ) => {
-        concat!($lit, "/", $lit2)
-    };
-    ( @@ $lit:literal / $($other:tt)* ) => {
-        $lit / path!( @@ $($other)* )
-    };
-    ( @@ $lit:literal ) => {
-        $lit
-    };
-    ( @@ $lit:tt / $($other:tt)* ) => {
-        $lit / path!( @@ $($other)* )
-    };
-    ( @@ $lit:tt ) => {
-        $lit / path!( @@ $($other)* )
-    };
-    ( @@ ) => {};
     ( $($other:tt)* ) => {
-         $crate::PathDSL::new() / path!( @@ $($other)* )
+         path_impl!( @($crate::PathDSL::new())@ $($other)* )
     };
     () => {  $crate::PathDSL::new() };
 }
@@ -652,6 +741,6 @@ mod test {
     #[test]
     fn macro_test() {
         let b = "blah";
-        path!("blah" / b);
+        path!("blah" | (&mut b + 2) | "hi" | "hi2" | "hi3" | "hi4" | "hi5" | "hi6" | "hi7" | "hi8" | "hi9" | "hi10" | "hi11" | "hi12" | "hi13" | "hi14" | "hi15" | "hi16"| h2);
     }
 }
