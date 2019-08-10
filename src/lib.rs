@@ -587,6 +587,30 @@ impl Div<Cow<'_, OsStr>> for &PathDSL {
     }
 }
 
+#[macro_export]
+macro_rules! path {
+    ( @@ $lit:literal / $lit2:literal ) => {
+        concat!($lit, "/", $lit2)
+    };
+    ( @@ $lit:literal / $($other:tt)* ) => {
+        $lit / path!( @@ $($other)* )
+    };
+    ( @@ $lit:literal ) => {
+        $lit
+    };
+    ( @@ $lit:tt / $($other:tt)* ) => {
+        $lit / path!( @@ $($other)* )
+    };
+    ( @@ $lit:tt ) => {
+        $lit / path!( @@ $($other)* )
+    };
+    ( @@ ) => {};
+    ( $($other:tt)* ) => {
+         $crate::PathDSL::new() / path!( @@ $($other)* )
+    };
+    () => {  $crate::PathDSL::new() };
+}
+
 #[cfg(test)]
 mod test {
     use crate::PathDSL;
@@ -624,5 +648,10 @@ mod test {
         let value = OsString::from("folder");
         let dsl = &PathDSL::new() / &value;
         let bp: Box<Path> = dsl.into();
+    }
+    #[test]
+    fn macro_test() {
+        let b = "blah";
+        path!("blah" / b);
     }
 }
