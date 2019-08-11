@@ -1,4 +1,108 @@
-//! A utility DSL and macro to help deal with paths and pathbufs
+//! DSL PathBuf Wrapper and Macro for easy creation of paths.
+//!
+//! PathBuf (and Path) give us a cross platform way to handle paths,
+//! but when you are creating part a path, you often want to
+//! use a raw string or a formatted string to express that. While
+//! this is significantly more terse, it has cross platform issues
+//! because of the slashes use in the string. Enter PathDSL.
+//!
+//! # **Incorrect:** String
+//!
+//! This is an easy but incorrect way of creating a path.
+//!
+//! ```rust,no_run
+//! use std::path::PathBuf;
+//! // Fails on windows when put onto the end of an absolute path
+//! let path = PathBuf::from("dir1/dir2/dir3/file.txt");
+//!
+//! # let mut path2 = PathBuf::new();
+//! # path2.push("dir1");
+//! # path2.push("dir2");
+//! # path2.push("dir3");
+//! # path2.push("file.txt");
+//! # assert_eq!(path, path2);
+//! ```
+//!
+//! # PathBuf API
+//!
+//! This is a correct but extremely verbose and mutable way of creating a path.
+//! It is possible to mitigate the mutability by making a mutable path inside a block
+//! and then assing the result of the block to an immutable variable, but that increases
+//! the amount of code.
+//!
+//! ```rust
+//! use std::path::PathBuf;
+//! let mut path = PathBuf::new();
+//! path.push("dir1");
+//! path.push("dir2");
+//! path.push("dir3");
+//! path.push("file.txt");
+//! ```
+//!
+//! # PathDSL Macro
+//!
+//! Compare with PathDSL's `path!` macro (note the use of `|` instead of `/` due to rust's macro rules).
+//! PathDSL is a drop-in replacement for PathBuf and is easily and cheeply convertable back and forth. This
+//! macro has a couple optimizations over just using the PathDSL class manually, described later.
+//!
+//! ```rust
+//! use path_dsl::{path, PathDSL};
+//! // Type annotation for illustration only, not needed
+//! let path: PathDSL = path!("dir1" | "dir2" | "dir3" | "file.txt");
+//!
+//! # use std::path::PathBuf;
+//! # let mut path2 = PathBuf::new();
+//! # path2.push("dir1");
+//! # path2.push("dir2");
+//! # path2.push("dir3");
+//! # path2.push("file.txt");
+//! # assert_eq!(path, path2);
+//! ```
+//!
+//! # PathDSL
+//!
+//! You can also generate a PathDSL directly:
+//!
+//! ```rust
+//! use path_dsl::PathDSL;
+//! let path = PathDSL::from("dir1") / "dir2" / "dir3" / "file.txt";
+//!
+//! # use std::path::PathBuf;
+//! # let mut path2 = PathBuf::new();
+//! # path2.push("dir1");
+//! # path2.push("dir2");
+//! # path2.push("dir3");
+//! # path2.push("file.txt");
+//! # assert_eq!(path, path2);
+//! ```
+//!
+//! # Adding Path-Like Structures
+//!
+//! As well as using regular string literals, you can use anything that can be passed to `PathBuf::push`
+//! as a part of the DSL.
+//!
+//! Note the borrow on `other`: as these types are not `Copy`, they will be moved
+//! into the path unless you borrow them. This matches behavior with `PathBuf::push`, but can be suprising
+//! when used in a infix expression.
+//!
+//! ```rust
+//! use path_dsl::{path, PathDSL};
+//!
+//! let other = PathBuf::from("some_dir");
+//! let filename: &str = "my_file.txt";
+//!
+//! let path = PathDSL::from("dir1") / "dir2" / &other / filename;
+//! let mac  = path!("dir1" | "dir2" | other | filename);
+//!
+//! # use std::path::PathBuf;
+//! # let mut path2 = PathBuf::new();
+//! # path2.push("dir1");
+//! # path2.push("dir2");
+//! # path2.push("some_dir");
+//! # path2.push("my_file.txt");
+//! # assert_eq!(path, path2);
+//! # assert_eq!(mac, path2);
+//! ```
 
 #![allow(clippy::cognitive_complexity)]
 #![allow(clippy::float_cmp)]
