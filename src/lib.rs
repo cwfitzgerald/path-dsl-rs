@@ -712,6 +712,7 @@ macro_rules! path {
 #[cfg(test)]
 mod test {
     use crate::PathDSL;
+    use crate::path;
     use std::ffi::{OsStr, OsString};
     use std::path::{Path, PathBuf};
 
@@ -750,6 +751,6 @@ mod test {
     #[test]
     fn macro_test() {
         let b = "blah";
-        path!("blah" | (&mut b + 2) | "hi" | "hi2" | "hi3" | "hi4" | "hi5" | "hi6" | "hi7" | "hi8" | "hi9" | "hi10" | "hi11" | "hi12" | "hi13" | "hi14" | "hi15" | "hi16"| h2);
+//        let p = path!("blah" | "hi" | "hi2" | "hi3" | "hi4" | "hi5" | "hi6" | "hi7" | "hi8" | "hi9" | "hi10" | "hi11" | "hi12" | "hi13" | "hi14" | "hi15" | "hi16"| b);
     }
 }
