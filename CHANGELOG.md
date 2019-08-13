@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing `Into<PathBuf> for PathDSL`
 - Primary Documentation
 - This changelog
+- README.md
 
 #### Changed
 - All functions marked `inline(always)`
