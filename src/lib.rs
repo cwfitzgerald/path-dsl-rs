@@ -284,22 +284,22 @@ pub struct PathDSL {
 }
 
 impl PathDSL {
-    #[inline]
+    #[inline(always)]
     pub fn new() -> Self {
         PathDSL { path: PathBuf::new() }
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn into_os_string(self) -> OsString {
         self.path.into_os_string()
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn into_boxed_path(self) -> Box<Path> {
         self.path.into_boxed_path()
     }
 
-    #[inline]
+    #[inline(always)]
     pub fn into_pathbuf(self) -> PathBuf {
         self.into()
     }
@@ -310,21 +310,21 @@ impl PathDSL {
 //////////////////////////////////
 
 impl AsRef<Path> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn as_ref(&self) -> &Path {
         self.path.as_ref()
     }
 }
 
 impl AsMut<PathBuf> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn as_mut(&mut self) -> &mut PathBuf {
         &mut self.path
     }
 }
 
 impl AsRef<OsStr> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn as_ref(&self) -> &OsStr {
         self.path.as_ref()
     }
@@ -333,14 +333,14 @@ impl AsRef<OsStr> for PathDSL {
 impl Deref for PathDSL {
     type Target = PathBuf;
 
-    #[inline]
+    #[inline(always)]
     fn deref(&self) -> &Self::Target {
         &self.path
     }
 }
 
 impl DerefMut for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.path
     }
@@ -354,7 +354,7 @@ impl<T> From<&T> for PathDSL
 where
     T: AsRef<Path> + ?Sized,
 {
-    #[inline]
+    #[inline(always)]
     fn from(other: &T) -> Self {
         PathDSL {
             path: PathBuf::from(other.as_ref()),
@@ -363,14 +363,14 @@ where
 }
 
 impl From<PathBuf> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn from(other: PathBuf) -> Self {
         PathDSL { path: other }
     }
 }
 
 impl From<OsString> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn from(other: OsString) -> Self {
         PathDSL {
             path: PathBuf::from(other),
@@ -379,7 +379,7 @@ impl From<OsString> for PathDSL {
 }
 
 impl From<String> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn from(other: String) -> Self {
         PathDSL {
             path: PathBuf::from(other),
@@ -388,7 +388,7 @@ impl From<String> for PathDSL {
 }
 
 impl From<Box<Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn from(other: Box<Path>) -> Self {
         PathDSL {
             path: PathBuf::from(other),
@@ -397,7 +397,7 @@ impl From<Box<Path>> for PathDSL {
 }
 
 impl From<Cow<'_, Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn from(other: Cow<'_, Path>) -> Self {
         PathDSL {
             path: PathBuf::from(other),
@@ -411,56 +411,56 @@ impl From<Cow<'_, Path>> for PathDSL {
 // We can't implement from on these types, so the best we can do is Into.
 
 impl Into<PathBuf> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> PathBuf {
         self.path
     }
 }
 
 impl Into<OsString> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> OsString {
         self.into_os_string()
     }
 }
 
 impl Into<Box<Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> Box<Path> {
         self.into_boxed_path()
     }
 }
 
 impl<'a> Into<Cow<'a, Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> Cow<'a, Path> {
         self.path.into()
     }
 }
 
 impl<'a> Into<Cow<'a, Path>> for &'a PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> Cow<'a, Path> {
         Cow::Borrowed(self.path.as_path())
     }
 }
 
 impl<'a> Into<Cow<'a, OsStr>> for &'a PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> Cow<'a, OsStr> {
         Cow::Borrowed(self.path.as_os_str())
     }
 }
 
 impl<'a> Into<Arc<Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> Arc<Path> {
         self.path.into()
     }
 }
 
 impl<'a> Into<Rc<Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn into(self) -> Rc<Path> {
         self.path.into()
     }
@@ -471,49 +471,49 @@ impl<'a> Into<Rc<Path>> for PathDSL {
 ////////////////
 
 impl PartialEq<PathDSL> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &PathDSL) -> bool {
         self.path == other.path
     }
 }
 
 impl PartialEq<PathBuf> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &PathBuf) -> bool {
         self.path == *other
     }
 }
 
 impl PartialEq<Path> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &Path) -> bool {
         self.path.as_path() == other
     }
 }
 
 impl PartialEq<OsStr> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &OsStr) -> bool {
         self.path.as_path() == other
     }
 }
 
 impl PartialEq<OsString> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &OsString) -> bool {
         self.path.as_path() == other
     }
 }
 
 impl<'a> PartialEq<Cow<'a, Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &Cow<'a, Path>) -> bool {
         self.path.as_path() == other
     }
 }
 
 impl<'a> PartialEq<Cow<'a, OsStr>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn eq(&self, other: &Cow<'a, OsStr>) -> bool {
         self.path.as_path() == other
     }
@@ -530,49 +530,49 @@ impl Eq for PathDSL {}
 /////////////////
 
 impl PartialOrd<PathDSL> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &PathDSL) -> Option<Ordering> {
         self.path.partial_cmp(&other.path)
     }
 }
 
 impl PartialOrd<PathBuf> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &PathBuf) -> Option<Ordering> {
         self.path.partial_cmp(other)
     }
 }
 
 impl PartialOrd<Path> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &Path) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other)
     }
 }
 
 impl<'a> PartialOrd<Cow<'a, Path>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &Cow<'a, Path>) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other)
     }
 }
 
 impl<'a> PartialOrd<Cow<'a, OsStr>> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &Cow<'a, OsStr>) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other.into())
     }
 }
 
 impl PartialOrd<OsStr> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &OsStr) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other.into())
     }
 }
 
 impl PartialOrd<OsString> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn partial_cmp(&self, other: &OsString) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other.into())
     }
@@ -583,7 +583,7 @@ impl PartialOrd<OsString> for PathDSL {
 /////////
 
 impl Ord for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn cmp(&self, other: &Self) -> Ordering {
         self.path.cmp(&other.path)
     }
@@ -596,7 +596,7 @@ impl Ord for PathDSL {
 impl FromStr for PathDSL {
     type Err = Infallible;
 
-    #[inline]
+    #[inline(always)]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         PathBuf::from_str(s).map(|path| PathDSL { path })
     }
@@ -607,7 +607,7 @@ impl FromStr for PathDSL {
 //////////
 
 impl Hash for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.path.hash(state)
     }
@@ -621,7 +621,7 @@ impl<P> Extend<P> for PathDSL
 where
     P: AsRef<Path>,
 {
-    #[inline]
+    #[inline(always)]
     fn extend<I: IntoIterator<Item = P>>(&mut self, iter: I) {
         self.path.extend(iter)
     }
@@ -635,7 +635,7 @@ impl<'a> IntoIterator for &'a PathDSL {
     type Item = &'a OsStr;
     type IntoIter = Iter<'a>;
 
-    #[inline]
+    #[inline(always)]
     fn into_iter(self) -> Self::IntoIter {
         self.path.as_path().into_iter()
     }
@@ -646,7 +646,7 @@ impl<'a> IntoIterator for &'a PathDSL {
 /////////////
 
 impl Borrow<Path> for PathDSL {
-    #[inline]
+    #[inline(always)]
     fn borrow(&self) -> &Path {
         self.path.borrow()
     }
@@ -659,7 +659,7 @@ impl Borrow<Path> for PathDSL {
 impl Div<PathDSL> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: PathDSL) -> Self::Output {
         if self.path.as_os_str().is_empty() {
             Self::from(rhs)
@@ -676,7 +676,7 @@ where
 {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: &T) -> Self::Output {
         self.path.push(rhs.as_ref());
         self
@@ -686,7 +686,7 @@ where
 impl Div<OsString> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: OsString) -> Self::Output {
         if self.path.as_os_str().is_empty() {
             Self::from(rhs)
@@ -700,7 +700,7 @@ impl Div<OsString> for PathDSL {
 impl Div<String> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: String) -> Self::Output {
         if self.path.as_os_str().is_empty() {
             Self::from(rhs)
@@ -714,7 +714,7 @@ impl Div<String> for PathDSL {
 impl Div<PathBuf> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: PathBuf) -> Self::Output {
         if self.path.as_os_str().is_empty() {
             Self::from(rhs)
@@ -728,7 +728,7 @@ impl Div<PathBuf> for PathDSL {
 impl Div<Box<Path>> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: Box<Path>) -> Self::Output {
         self.path.push(rhs);
         self
@@ -738,7 +738,7 @@ impl Div<Box<Path>> for PathDSL {
 impl Div<Cow<'_, Path>> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: Cow<'_, Path>) -> Self::Output {
         self.path.push(rhs);
         self
@@ -748,7 +748,7 @@ impl Div<Cow<'_, Path>> for PathDSL {
 impl Div<Cow<'_, OsStr>> for PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(mut self, rhs: Cow<'_, OsStr>) -> Self::Output {
         self.path.push(rhs);
         self
@@ -762,7 +762,7 @@ impl Div<Cow<'_, OsStr>> for PathDSL {
 impl Div<PathDSL> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: PathDSL) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
@@ -776,7 +776,7 @@ where
 {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: &T) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs.as_ref());
@@ -787,7 +787,7 @@ where
 impl Div<OsString> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: OsString) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
@@ -798,7 +798,7 @@ impl Div<OsString> for &PathDSL {
 impl Div<String> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: String) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
@@ -809,7 +809,7 @@ impl Div<String> for &PathDSL {
 impl Div<PathBuf> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: PathBuf) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
@@ -820,7 +820,7 @@ impl Div<PathBuf> for &PathDSL {
 impl Div<Box<Path>> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: Box<Path>) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
@@ -831,7 +831,7 @@ impl Div<Box<Path>> for &PathDSL {
 impl Div<Cow<'_, Path>> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: Cow<'_, Path>) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
@@ -842,7 +842,7 @@ impl Div<Cow<'_, Path>> for &PathDSL {
 impl Div<Cow<'_, OsStr>> for &PathDSL {
     type Output = PathDSL;
 
-    #[inline]
+    #[inline(always)]
     fn div(self, rhs: Cow<'_, OsStr>) -> Self::Output {
         let mut new_self = (*self).clone();
         new_self.path.push(rhs);
