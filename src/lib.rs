@@ -298,6 +298,11 @@ impl PathDSL {
     pub fn into_boxed_path(self) -> Box<Path> {
         self.path.into_boxed_path()
     }
+
+    #[inline]
+    pub fn into_pathbuf(self) -> PathBuf {
+        self.into()
+    }
 }
 
 //////////////////////////////////
