@@ -16,7 +16,6 @@ This is an easy but incorrect way of creating a path.
 use std::path::PathBuf;
 // Fails on windows when put onto the end of an absolute path
 let path = PathBuf::from("dir1/dir2/dir3/file.txt");
-
 ```
 
 #### PathBuf API
@@ -46,7 +45,6 @@ recommended to always use the macro when using the DSL.
 use path_dsl::{path, PathDSL};
 // Type annotation for illustration only, not needed
 let path: PathDSL = path!("dir1" | "dir2" | "dir3" | "file.txt");
-
 ```
 
 #### PathDSL
@@ -56,7 +54,6 @@ You can also generate a PathDSL directly, though this is discouraged.
 ```rust
 use path_dsl::PathDSL;
 let path = PathDSL::from("dir1") / "dir2" / "dir3" / "file.txt";
-
 ```
 
 #### Adding Path-Like Structures
@@ -76,7 +73,6 @@ let filename: &str = "my_file.txt";
 
 let path = PathDSL::from("dir1") / "dir2" / &other / filename;
 let mac  = path!("dir1" | "dir2" | other | filename);
-
 ```
 
 #### Moving vs Borrowing
@@ -109,7 +105,6 @@ let borrow: &str = "my_file.txt";
 
 let path = PathDSL::new() / &value / borrow; // Borrow value so it can be used later
 let mac  = path!(value | borrow); // Not used afterwards, so doesn't need a borrow
-
 ```
 
 #### PathDSL <=> PathBuf
@@ -192,7 +187,6 @@ use path_dsl::path;
 
 let first = PathBuf::from("a_very_long_folder_name");
 let p = path!(first); // Does not copy anything.
-
 ```
 
 ## Known Issues
