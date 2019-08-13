@@ -112,6 +112,8 @@
 //! **it will move it**, making the value unusable afterwards. While these are the normal rules
 //! for rust, infix operators are normally used with `Copy` types, so this may be **surprising**.
 //!
+//! Both mutable and immutable borrows are supported, though they will never actually mutate anything.
+//!
 //! ```rust,compile_fail
 //! use path_dsl::{path, PathDSL};
 //! # use std::path::PathBuf;
@@ -132,7 +134,7 @@
 //! let borrow: &str = "my_file.txt";
 //!
 //! let path = PathDSL::new() / &value / borrow; // Borrow value so it can be used later
-//! let mac  = path!(value | borrow); // Not uses afterwards, so doesn't need a borrow
+//! let mac  = path!(value | borrow); // Not used afterwards, so doesn't need a borrow
 //!
 //! # use std::path::PathBuf;
 //! # let mut path2 = PathBuf::new();
@@ -150,8 +152,8 @@
 //! is trivial through dereferencing or through the `PathDSL::into_pathbuf` function.
 //!
 //! PathDSL is `#[repr(transparent)]` over `PathBuf` and all functions are force-inlined so
-//! conversions and all operations should be cost-free compared to the `PathBuf` operation.
-//! If they aren't, Please file a bug.
+//! conversions and operations should be cost-free compared to the equivalent `PathBuf` operation.
+//! If they aren't, please file a bug.
 //!
 //! Some known issues are:
 //!
@@ -165,7 +167,7 @@
 //! let buf = PathBuf::from("file.txt");
 //!
 //! assert!(dsl == buf);
-//! // Must de-reference as PathDSL can't implement `Eq` for `PathBuf`
+//! // Must de-reference to PathBuf can't implement `Eq` for `PathBuf`
 //! assert!(buf == *dsl);
 //! ```
 //!
@@ -193,11 +195,11 @@
 //!
 //! As previously mentioned, the macro contains some optimizations over using raw `PathDSL` and should always
 //! be used over manually using PathDSL. These optimizations happen at compile time, and are guaranteed.
-//! Further details on these can be found on the `path!` macro documentation.
+//! Further details on these can be found on the [`path!`](macro.path.html) macro documentation.
 //!
 //! **String Literal Concatenation:**
 //!
-//! While it is ill-advised to use string literals with slashes in a `Path`, The `path!` macro
+//! While it is ill-advised to use string literals with slashes in a `Path`, The [`path!`](macro.path.html) macro
 //! takes slashes into account, and automatically constructs a single string literal from multiple
 //! consecutive string literals. This can potentially save an allocation or two in the underlying
 //! `OsString`.
@@ -216,9 +218,9 @@
 //!
 //! **First-Argument Optimization:**
 //!
-//! When the very first argument of the `path!` macro is a owning `PathBuf`, `OsString` or `PathDSL`
-//! passed by value (moved), instead of copying everything into a new `PathDSL` it will just steal the
-//! buffer from that moved-in value. This allows you to use the `path!` macro fearlessly when appending
+//! When the very first argument of the [`path!`](macro.path.html) macro is a owning `PathBuf`, `OsString` or `PathDSL`
+//! passed by value (moved), instead of copying everything into a new `PathDSL`, it will just steal the
+//! buffer from that moved-in value. This allows you to use the [`path!`](macro.path.html) macro fearlessly when appending
 //! to already existing variables.
 //!
 //! ```rust
@@ -235,7 +237,7 @@
 //! # Known Issues
 //!
 //! Due to my mitigation of a [rustc bug](https://github.com/rust-lang/rust/issues/63460) there may be
-//! issues when renaming `path_dsl` crate and using the `path!` macro. I currently have not have experienced this,
+//! issues when renaming `path_dsl` crate and using the [`path!`](macro.path.html) macro. I currently have not have experienced this,
 //! but if it happens, please report an issue and I'll add it to the documentation.
 //!
 //! # Why Use A Crate?
@@ -275,6 +277,8 @@ use std::sync::Arc;
 /// It is usable nearly identically to a PathBuf.
 /// Supports [`Deref`](https://doc.rust-lang.org/stable/core/ops/trait.Deref.html) to
 /// [`PathBuf`](https://doc.rust-lang.org/stable/std/path/struct.PathBuf.html) to cover all edge cases.
+///
+/// Prefer using the [`path!`](macro.path.html) macro.
 ///
 /// See [crate documentation](index.html) for usage examples.
 #[derive(Debug, Clone, Default)]
@@ -868,6 +872,7 @@ macro_rules! separator {
 #[macro_export]
 macro_rules! concat_separator {
     ( $e:literal, $($other:literal),+ ) => {
+        // Working around https://github.com/rust-lang/rust/issues/63460
         concat!($e, path_dsl::separator!(), path_dsl::concat_separator!($($other),+))
     };
     ( $e:literal ) => {
@@ -964,6 +969,83 @@ macro_rules! path_impl {
     };
 }
 
+/// Efficient macro for creating a `PathDSL`.
+///
+/// General usage documentation is available at the [crate root](index.html#pathdsl-macro). The following is documentation
+/// of the optimizations made and internal implementation details.
+///
+/// # Expansion
+///
+/// The macro is a fairly simple forwarding macro that just matches against the `|` syntax specified
+/// and forwards it on to the `Div` based implementation. However it does do some small optimizations,
+/// including the use of a hidden type called `CopylessDSL` which allows for the
+/// no-copy-on-first-argument-move optimization be guarenteed. A single `/` operation on `CopylessDSL` immediately
+/// produces a `PathDSL` always.
+///
+/// Some example expansions (on a unix-like system):
+///
+/// ```rust,ignore
+/// path!("concat" | "optimization");
+/// (CopylessDSL::new() / "concat/optimization").into::<PathDSL>();
+/// ```
+///
+/// ```rust,ignore
+/// // Steals the data from `owning_path`
+/// path!(owning_path | "concat" | "optimization");
+/// (CopylessDSL::new() / owning_path / "concat/optimization").into::<PathDSL>();
+/// ```
+///
+/// ```rust,ignore
+/// // Copies the data from `owning_path` because we already have a buffer
+/// path!("concat" | "optimization" | owning_path | "other_thing");
+/// (CopylessDSL::new() / "concat/optimization" / owning_path / "other_thing").into::<PathDSL>();
+/// ```
+///
+/// # String Literal Concatenation
+///
+/// One of the optimizations made in the macro is the correct concatenation of multiple string literals in a row, as
+/// shown above. This is normally not recommended because there are situations where a path with `/`
+/// will not work on a windows machine. To get around this, I have first actually verified that `\\`
+/// only happens on windows with a ripgrep of the rust codebase (master as of 2019-08-13):
+///
+/// ```text
+/// $ rg "MAIN_SEP: .*="
+/// rust\src\libstd\sys\sgx\path.rs
+/// 19:pub const MAIN_SEP: char = '/';
+///
+/// rust\src\libstd\sys\unix\path.rs
+/// 19:pub const MAIN_SEP: char = '/';
+///
+/// rust\src\libstd\sys\wasi\path.rs
+/// 19:pub const MAIN_SEP: char = '/';
+///
+/// rust\src\libstd\sys\vxworks\path.rs
+/// 19:pub const MAIN_SEP: char = '/';
+///
+/// rust\src\libstd\sys\wasm\path.rs
+/// 19:pub const MAIN_SEP: char = '/';
+///
+/// rust\src\libstd\sys\windows\path.rs
+/// 93:pub const MAIN_SEP: char = '\\';
+/// ```
+///
+/// I then have an internal macro that I define multiple times using `#[cfg(windows)]` etc. to always
+/// give me the correct separator no matter the platform.
+///
+/// Additionally, due to either my inability to write macros well, or an inherent limitation in rust's
+/// declarative macros, I can't match on a set of `|` separated string literals variadically. As a result
+/// I have unrolled the combiner out to 16 string literals in a row. This should be enough for basically
+/// everyone. If you go above this limit, it will combine them into `ceil(N/16)` literals not 1. If you
+/// need this limit raised, feel free to submit a PR or an issue, but... why? 😃
+///
+/// # CopylessDSL
+///
+/// `CopylessDSL` is a `#[doc(hidden)]` class that aids in the zero-copy optimization. It is a very limited
+/// form of `PathDSL` that supports `Div` on all types `PathDSL` supports. It will steal the buffer of any
+/// moved in owning values. All `Div` operations return a `PathDSL`. Additionally all macro invocations are
+/// surrounded by a forced conversion to a `PathDSL` so this type should never be seen in user code.
+///
+/// If this type shows up in user code at all, this is a bug and should be reported.
 #[macro_export]
 macro_rules! path {
     ( $($other:tt)* ) => {
