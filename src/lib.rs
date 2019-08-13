@@ -41,7 +41,7 @@
 //!
 //! # PathDSL Macro
 //!
-//! Compare with PathDSL's `path!` macro (note the use of `|` instead of `/` due to rust's macro rules).
+//! Compare with PathDSL's [`path!`](macro.path.html) macro (note the use of `|` instead of `/` due to rust's macro rules).
 //! PathDSL is a drop-in replacement for PathBuf and is easily and cheaply convertible back and forth. This
 //! macro has a couple optimizations over just using the PathDSL class manually, described later. It is
 //! recommended to always use the macro when using the DSL.
