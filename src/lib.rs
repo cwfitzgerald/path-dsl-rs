@@ -410,6 +410,13 @@ impl From<Cow<'_, Path>> for PathDSL {
 //////////
 // We can't implement from on these types, so the best we can do is Into.
 
+impl Into<PathBuf> for PathDSL {
+    #[inline]
+    fn into(self) -> PathBuf {
+        self.path
+    }
+}
+
 impl Into<OsString> for PathDSL {
     #[inline]
     fn into(self) -> OsString {
