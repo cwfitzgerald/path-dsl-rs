@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v0.4.0
+
 #### Added
 - `PathDSL::into_pathbuf`
 - Missing `Into<PathBuf> for PathDSL`
@@ -61,7 +63,8 @@ Released 2019-08-08
 
 ## Diffs
 
-- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.3.0...HEAD)
+- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.4.0...HEAD)
+- [v0.3.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.3.0...v0.4.0)
 - [v0.3.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.2.0...v0.3.0)
 - [v0.2.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.1.1...v0.2.0)
 - [v0.1.1](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.1.0...v0.1.1)
