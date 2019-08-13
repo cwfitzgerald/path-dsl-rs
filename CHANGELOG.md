@@ -14,6 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+#### Added
+- `PathDSL::into_pathbuf`
+- Missing `Into<PathBuf> for PathDSL`
+- Primary Documentation
+- This changelog
+
+#### Changed
+- All functions marked `inline(always)`
+- PathBuf is now `repr(transparent)` over `PathBuf`
+
+#### Fixed
+- Macro namespacing using `$crate` except where blocked by [rust-lang/rust#63460](https://github.com/rust-lang/rust/issues/63460).
+
 ## v0.3.0
 
 Released 2019-08-09
