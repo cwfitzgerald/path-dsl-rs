@@ -278,6 +278,7 @@ use std::sync::Arc;
 ///
 /// See [crate documentation](index.html) for usage examples.
 #[derive(Debug, Clone, Default)]
+#[repr(transparent)]
 pub struct PathDSL {
     path: PathBuf,
 }
