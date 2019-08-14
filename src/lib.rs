@@ -1248,21 +1248,39 @@ macro_rules! path_impl {
 ///
 /// Some example expansions (on a unix-like system):
 ///
-/// ```rust,ignore
+/// ```rust
+/// # use path_dsl::{CopylessDSL, PathDSL, path};
+/// # let ret1 =
 /// path!("concat" | "optimization");
-/// (CopylessDSL::new() / "concat/optimization").into::<PathDSL>();
+/// # let res2 =
+/// Into::<PathDSL>::into(CopylessDSL::new() / "concat/optimization");
+/// # assert_eq!(ret1, res2);
 /// ```
 ///
-/// ```rust,ignore
+/// ```rust
+/// # use path_dsl::{CopylessDSL, PathDSL, path};
+/// # use std::path::PathBuf;
 /// // Steals the data from `owning_path`
+/// # let owning_path = PathBuf::new();
+/// # let ret1 =
 /// path!(owning_path | "concat" | "optimization");
-/// (CopylessDSL::new() / owning_path / "concat/optimization").into::<PathDSL>();
+/// # let owning_path = PathBuf::new();
+/// # let res2 =
+/// Into::<PathDSL>::into(CopylessDSL::new() / owning_path / "concat/optimization");
+/// # assert_eq!(ret1, res2);
 /// ```
 ///
-/// ```rust,ignore
+/// ```rust
+/// # use path_dsl::{CopylessDSL, PathDSL, path};
+/// # use std::path::PathBuf;
+/// # let owning_path = PathBuf::new();
 /// // Copies the data from `owning_path` because we already have a buffer
+/// # let ret1 =
 /// path!("concat" | "optimization" | owning_path | "other_thing");
-/// (CopylessDSL::new() / "concat/optimization" / owning_path / "other_thing").into::<PathDSL>();
+/// # let owning_path = PathBuf::new();
+/// # let res2 =
+/// Into::<PathDSL>::into(CopylessDSL::new() / "concat/optimization" / owning_path / "other_thing");
+/// # assert_eq!(ret1, res2);
 /// ```
 ///
 /// # String Literal Concatenation
