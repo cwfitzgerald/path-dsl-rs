@@ -13,8 +13,12 @@ readme = "README.md"
 exclude = [
     ".gitignore",
     ".rustfmt.toml",
+    "tests/*",
 ]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+[dev-dependencies]
+paste = "0.1.5"
