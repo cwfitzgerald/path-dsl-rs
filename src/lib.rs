@@ -370,6 +370,18 @@ where
     }
 }
 
+impl<T> From<&mut T> for PathDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    #[inline(always)]
+    fn from(other: &mut T) -> Self {
+        PathDSL {
+            path: PathBuf::from(other.as_ref()),
+        }
+    }
+}
+
 impl From<PathBuf> for PathDSL {
     #[inline(always)]
     fn from(other: PathBuf) -> Self {
@@ -691,6 +703,19 @@ where
     }
 }
 
+impl<T> Div<&mut T> for PathDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(mut self, rhs: &mut T) -> Self::Output {
+        self.path.push(rhs.as_ref());
+        self
+    }
+}
+
 impl Div<OsString> for PathDSL {
     type Output = PathDSL;
 
@@ -792,6 +817,20 @@ where
     }
 }
 
+impl<T> Div<&mut T> for &PathDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: &mut T) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs.as_ref());
+        new_self
+    }
+}
+
 impl Div<OsString> for &PathDSL {
     type Output = PathDSL;
 
@@ -858,6 +897,114 @@ impl Div<Cow<'_, OsStr>> for &PathDSL {
     }
 }
 
+//////////////
+// Div &mut //
+//////////////
+
+impl Div<PathDSL> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: PathDSL) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
+
+impl<T> Div<&T> for &mut PathDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: &T) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs.as_ref());
+        new_self
+    }
+}
+
+impl<T> Div<&mut T> for &mut PathDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: &mut T) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs.as_ref());
+        new_self
+    }
+}
+
+impl Div<OsString> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: OsString) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
+
+impl Div<String> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: String) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
+
+impl Div<PathBuf> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: PathBuf) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
+
+impl Div<Box<Path>> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: Box<Path>) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
+
+impl Div<Cow<'_, Path>> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: Cow<'_, Path>) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
+
+impl Div<Cow<'_, OsStr>> for &mut PathDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: Cow<'_, OsStr>) -> Self::Output {
+        let mut new_self = (*self).clone();
+        new_self.path.push(rhs);
+        new_self
+    }
+}
 
 /////////////////
 // CopylessDSL //
