@@ -288,21 +288,25 @@ pub struct PathDSL {
 }
 
 impl PathDSL {
+    /// Creates a new PathDSL with a new empty PathBuf inside
     #[inline(always)]
     pub fn new() -> Self {
         PathDSL { path: PathBuf::new() }
     }
 
+    /// Forwarder function for [`PathBuf::into_os_string`](https://doc.rust-lang.org/std/path/struct.PathBuf.html#method.into_os_string)
     #[inline(always)]
     pub fn into_os_string(self) -> OsString {
         self.path.into_os_string()
     }
 
+    /// Forwarder function for [`PathBuf::into_boxed_path`](https://doc.rust-lang.org/std/path/struct.PathBuf.html#method.into_boxed_path)
     #[inline(always)]
     pub fn into_boxed_path(self) -> Box<Path> {
         self.path.into_boxed_path()
     }
 
+    /// Converts this PathDSL into the underlying PathBuf
     #[inline(always)]
     pub fn into_pathbuf(self) -> PathBuf {
         self.into()
