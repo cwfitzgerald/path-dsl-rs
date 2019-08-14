@@ -858,6 +858,119 @@ impl Div<Cow<'_, OsStr>> for &PathDSL {
     }
 }
 
+
+/////////////////
+// CopylessDSL //
+/////////////////
+
+/// Implementation struct for the no-copy optimization. Should not ever
+/// be found in user code.
+#[doc(hidden)]
+pub struct CopylessDSL;
+
+impl CopylessDSL {
+    /// Creates a new empty CopylessDSL
+    #[doc(hidden)]
+    #[inline(always)]
+    pub fn new() -> CopylessDSL {
+        CopylessDSL
+    }
+}
+
+impl Into<PathDSL> for CopylessDSL {
+    #[inline(always)]
+    fn into(self) -> PathDSL {
+        PathDSL::new()
+    }
+}
+
+impl Div<PathDSL> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: PathDSL) -> Self::Output {
+        rhs
+    }
+}
+
+impl<T> Div<&T> for CopylessDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: &T) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl<T> Div<&mut T> for CopylessDSL
+    where
+        T: AsRef<Path> + ?Sized,
+{
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: &mut T) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl Div<OsString> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: OsString) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl Div<String> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: String) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl Div<PathBuf> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: PathBuf) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl Div<Box<Path>> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: Box<Path>) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl Div<Cow<'_, Path>> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: Cow<'_, Path>) -> Self::Output {
+        PathDSL::from(rhs)
+    }
+}
+
+impl Div<Cow<'_, OsStr>> for CopylessDSL {
+    type Output = PathDSL;
+
+    #[inline(always)]
+    fn div(self, rhs: Cow<'_, OsStr>) -> Self::Output {
+        PathDSL::from(&*rhs)
+    }
+}
+
 #[cfg(windows)]
 #[doc(hidden)]
 #[macro_export]
@@ -1053,7 +1166,7 @@ macro_rules! path_impl {
 #[macro_export]
 macro_rules! path {
     ( $($other:tt)* ) => {
-         $crate::path_impl!( @($crate::PathDSL::new())@ $($other)* )
+         ::std::convert::Into::<$crate::PathDSL>::into($crate::path_impl!( @($crate::CopylessDSL::new())@ $($other)* ));
     };
     () => {  $crate::PathDSL::new() };
 }
