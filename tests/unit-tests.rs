@@ -3,6 +3,8 @@ use path_dsl::{path, PathDSL};
 use std::borrow::Cow;
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
+use std::sync::Arc;
 
 macro_rules! dsl_test {
     ($(constructor: $constructor:path,)? $(converter: ($($conv:tt)+),)? $(self: ($($selfmod:tt)+),)? name: $id:ident) => {
@@ -121,3 +123,25 @@ from_test!(constructor: PathDSL::from, name: dsl);
 from_test!(constructor: gen_box_path, name: box_path);
 from_test!(constructor: gen_cow_path, name: cow_path);
 from_test!(constructor: gen_cow_osstr, name: cow_osstr);
+
+macro_rules! into_test {
+    (type: $type:ty, $(converter: ($($conv:tt)+),)? name: $name:ident) => {
+        paste::item!{
+            #[allow(unused)]
+            #[test]
+            fn [<into_ $name>]() {
+                let p = $($($conv)+)?(PathDSL::from("test_path"));
+                let _t: $type = p.into();
+            }
+        }
+    };
+}
+
+into_test!(type: OsString, name: osstring);
+into_test!(type: PathBuf, name: pathbuf);
+into_test!(type: PathDSL, name: dsl);
+into_test!(type: Box<Path>, name: box_path);
+into_test!(type: Arc<Path>, name: arc_path);
+into_test!(type: Rc<Path>, name: rc_path);
+into_test!(type: Cow<Path>, converter: (&), name: cow_path);
+into_test!(type: Cow<OsStr>, converter: (&), name: cow_osstr);
