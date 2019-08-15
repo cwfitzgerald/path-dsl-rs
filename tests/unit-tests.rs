@@ -95,3 +95,29 @@ partial_ord_test!(constructor: PathDSL::from, name: dsl, owned);
 partial_ord_test!(constructor: gen_box_path, name: box_path, unowned);
 partial_ord_test!(constructor: gen_cow_path, name: cow_path, owned);
 partial_ord_test!(constructor: gen_cow_osstr, name: cow_osstr, owned);
+
+macro_rules! from_test {
+    ($(constructor: $constructor:path,)? $(converter: ($($conv:tt)+),)? name: $name:ident) => {
+        paste::item!{
+            #[allow(unused)]
+            #[test]
+            fn [<from_ $name>]() {
+                let mut first = $($constructor)?("test_path");
+                let second = $($($conv)+)?(first);
+
+                let _p = PathDSL::from(second);
+            }
+        }
+    };
+}
+
+from_test!(constructor: OsStr::new, name: osstr);
+from_test!(constructor: OsString::from, name: osstring);
+from_test!(name: str);
+from_test!(constructor: String::from, name: string);
+from_test!(constructor: Path::new, name: path);
+from_test!(constructor: PathBuf::from, name: pathbuf);
+from_test!(constructor: PathDSL::from, name: dsl);
+from_test!(constructor: gen_box_path, name: box_path);
+from_test!(constructor: gen_cow_path, name: cow_path);
+from_test!(constructor: gen_cow_osstr, name: cow_osstr);
