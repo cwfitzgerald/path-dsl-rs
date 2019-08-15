@@ -1,7 +1,7 @@
 use path_dsl::{path, PathDSL};
+use std::borrow::Cow;
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
-use std::borrow::Cow;
 
 macro_rules! dsl_test {
     ($(first: $first:path,)? $(second: ($($conv:tt)+),)? $(self: ($($selfmod:tt)+),)? name: $id:ident) => {

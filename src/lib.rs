@@ -41,8 +41,8 @@
 //!
 //! # PathDSL Macro
 //!
-//! Compare with PathDSL's [`path!`](macro.path.html) macro (note the use of `|` instead of `/` due to rust's macro rules).
-//! PathDSL is a drop-in replacement for PathBuf and is easily and cheaply convertible back and forth. This
+//! Compare with PathDSL's [`path!`](macro.path.html) macro (note the use of `|` instead of `/` due to rust's macro
+//! rules). PathDSL is a drop-in replacement for PathBuf and is easily and cheaply convertible back and forth. This
 //! macro has a couple optimizations over just using the PathDSL class manually, described later. It is
 //! recommended to always use the macro when using the DSL.
 //!
@@ -220,8 +220,8 @@
 //!
 //! When the very first argument of the [`path!`](macro.path.html) macro is a owning `PathBuf`, `OsString` or `PathDSL`
 //! passed by value (moved), instead of copying everything into a new `PathDSL`, it will just steal the
-//! buffer from that moved-in value. This allows you to use the [`path!`](macro.path.html) macro fearlessly when appending
-//! to already existing variables.
+//! buffer from that moved-in value. This allows you to use the [`path!`](macro.path.html) macro fearlessly when
+//! appending to already existing variables.
 //!
 //! ```rust
 //! use path_dsl::path;
@@ -237,8 +237,8 @@
 //! # Known Issues
 //!
 //! Due to my mitigation of a [rustc bug](https://github.com/rust-lang/rust/issues/63460) there may be
-//! issues when renaming `path_dsl` crate and using the [`path!`](macro.path.html) macro. I currently have not have experienced this,
-//! but if it happens, please report an issue and I'll add it to the documentation.
+//! issues when renaming `path_dsl` crate and using the [`path!`](macro.path.html) macro. I currently have not have
+//! experienced this, but if it happens, please report an issue and I'll add it to the documentation.
 //!
 //! # Why Use A Crate?
 //!
@@ -371,8 +371,8 @@ where
 }
 
 impl<T> From<&mut T> for PathDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     #[inline(always)]
     fn from(other: &mut T) -> Self {
@@ -704,8 +704,8 @@ where
 }
 
 impl<T> Div<&mut T> for PathDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     type Output = PathDSL;
 
@@ -818,8 +818,8 @@ where
 }
 
 impl<T> Div<&mut T> for &PathDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     type Output = PathDSL;
 
@@ -913,8 +913,8 @@ impl Div<PathDSL> for &mut PathDSL {
 }
 
 impl<T> Div<&T> for &mut PathDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     type Output = PathDSL;
 
@@ -927,8 +927,8 @@ impl<T> Div<&T> for &mut PathDSL
 }
 
 impl<T> Div<&mut T> for &mut PathDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     type Output = PathDSL;
 
@@ -1041,8 +1041,8 @@ impl Div<PathDSL> for CopylessDSL {
 }
 
 impl<T> Div<&T> for CopylessDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     type Output = PathDSL;
 
@@ -1053,8 +1053,8 @@ impl<T> Div<&T> for CopylessDSL
 }
 
 impl<T> Div<&mut T> for CopylessDSL
-    where
-        T: AsRef<Path> + ?Sized,
+where
+    T: AsRef<Path> + ?Sized,
 {
     type Output = PathDSL;
 
@@ -1122,14 +1122,18 @@ impl Div<Cow<'_, OsStr>> for CopylessDSL {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! separator {
-    () => { "\\" };
+    () => {
+        "\\"
+    };
 }
 
 #[cfg(not(windows))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! separator {
-    () => { "/" };
+    () => {
+        "/"
+    };
 }
 
 #[doc(hidden)]
@@ -1235,8 +1239,8 @@ macro_rules! path_impl {
 
 /// Efficient macro for creating a `PathDSL`.
 ///
-/// General usage documentation is available at the [crate root](index.html#pathdsl-macro). The following is documentation
-/// of the optimizations made and internal implementation details.
+/// General usage documentation is available at the [crate root](index.html#pathdsl-macro). The following is
+/// documentation of the optimizations made and internal implementation details.
 ///
 /// # Expansion
 ///
