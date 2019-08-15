@@ -425,6 +425,15 @@ impl From<Cow<'_, Path>> for PathDSL {
     }
 }
 
+impl From<Cow<'_, OsStr>> for PathDSL {
+    #[inline(always)]
+    fn from(other: Cow<'_, OsStr>) -> Self {
+        PathDSL {
+            path: PathBuf::from(&*other),
+        }
+    }
+}
+
 //////////
 // Into //
 //////////
