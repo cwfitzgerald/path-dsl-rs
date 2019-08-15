@@ -73,7 +73,7 @@ macro_rules! partial_ord_test {
     (unowned, $lhs:expr, $rhs:expr) => {
         assert_le!($lhs, *$rhs)
     };
-    ($(constructor: $constructor:path,)? $(converter: ($($conv:tt)+),)? name: $name:ident, $ownage:tt) => {
+    ($(constructor: $constructor:path,)? name: $name:ident, $ownage:tt) => {
         paste::item!{
             #[allow(unused)]
             #[test]
@@ -81,9 +81,8 @@ macro_rules! partial_ord_test {
                 let lhs = PathDSL::from("aaaaa");
 
                 let mut first = $($constructor)?("zzzzz");
-                let second = $($($conv)+)?(first);
 
-                partial_ord_test!($ownage, lhs, second);
+                partial_ord_test!($ownage, lhs, first);
             }
         }
     };
@@ -99,15 +98,14 @@ partial_ord_test!(constructor: gen_cow_path, name: cow_path, owned);
 partial_ord_test!(constructor: gen_cow_osstr, name: cow_osstr, owned);
 
 macro_rules! from_test {
-    ($(constructor: $constructor:path,)? $(converter: ($($conv:tt)+),)? name: $name:ident) => {
+    ($(constructor: $constructor:path,)? name: $name:ident) => {
         paste::item!{
             #[allow(unused)]
             #[test]
             fn [<from_ $name>]() {
                 let mut first = $($constructor)?("test_path");
-                let second = $($($conv)+)?(first);
 
-                let _p = PathDSL::from(second);
+                let _p = PathDSL::from(first);
             }
         }
     };
