@@ -563,7 +563,7 @@ impl PartialOrd<PathBuf> for PathDSL {
     }
 }
 
-impl PartialOrd<&Path> for PathDSL {
+impl PartialOrd<Path> for PathDSL {
     #[inline(always)]
     fn partial_cmp(&self, other: &Path) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other)
@@ -584,7 +584,7 @@ impl<'a> PartialOrd<Cow<'a, OsStr>> for PathDSL {
     }
 }
 
-impl PartialOrd<&OsStr> for PathDSL {
+impl PartialOrd<OsStr> for PathDSL {
     #[inline(always)]
     fn partial_cmp(&self, other: &OsStr) -> Option<Ordering> {
         self.path.as_path().partial_cmp(other.into())
