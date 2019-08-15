@@ -589,23 +589,26 @@ impl<'a> PartialOrd<Cow<'a, Path>> for PathDSL {
 }
 
 impl<'a> PartialOrd<Cow<'a, OsStr>> for PathDSL {
+    //noinspection RsTypeCheck
     #[inline(always)]
     fn partial_cmp(&self, other: &Cow<'a, OsStr>) -> Option<Ordering> {
-        self.path.as_path().partial_cmp(other.into())
+        self.path.as_path().partial_cmp(&*other)
     }
 }
 
 impl PartialOrd<OsStr> for PathDSL {
+    //noinspection RsTypeCheck
     #[inline(always)]
     fn partial_cmp(&self, other: &OsStr) -> Option<Ordering> {
-        self.path.as_path().partial_cmp(other.into())
+        self.path.as_path().partial_cmp(&*other)
     }
 }
 
 impl PartialOrd<OsString> for PathDSL {
+    //noinspection RsTypeCheck
     #[inline(always)]
     fn partial_cmp(&self, other: &OsString) -> Option<Ordering> {
-        self.path.as_path().partial_cmp(other.into())
+        self.path.as_path().partial_cmp(&*other)
     }
 }
 
@@ -668,7 +671,7 @@ impl<'a> IntoIterator for &'a PathDSL {
 
     #[inline(always)]
     fn into_iter(self) -> Self::IntoIter {
-        self.path.as_path().into_iter()
+        self.path.as_path().iter()
     }
 }
 
@@ -693,7 +696,7 @@ impl Div<PathDSL> for PathDSL {
     #[inline(always)]
     fn div(mut self, rhs: PathDSL) -> Self::Output {
         if self.path.as_os_str().is_empty() {
-            Self::from(rhs)
+            rhs
         } else {
             self.path.push(rhs);
             self
@@ -1023,6 +1026,7 @@ impl Div<Cow<'_, OsStr>> for &mut PathDSL {
 
 /// Implementation struct for the no-copy optimization. Should not ever
 /// be found in user code.
+#[derive(Default)]
 #[doc(hidden)]
 pub struct CopylessDSL;
 
