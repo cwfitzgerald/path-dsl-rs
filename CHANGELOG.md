@@ -6,6 +6,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [Unreleased](#unreleased)
+- [v0.5.1](#v051)
 - [v0.5.0](#v050)
 - [v0.4.0](#v040)
 - [v0.3.0](#v030)
@@ -16,11 +17,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## v0.5.1
+
+Released 2019-08-15
+
 #### Fixed
 - Polished documentation
 - All clippy lints!
 
 ## v0.5.0
+
+Released 2019-08-15
 
 #### Added
 - Implemented CopylessDSL
@@ -33,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documentation links now always point to newest version
 
 ## v0.4.0
+
+Released 2019-08-13
 
 #### Added
 - `PathDSL::into_pathbuf`
@@ -50,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## v0.3.0
 
-Released 2019-08-09
+Released 2019-08-10
 
 #### Added
 - Filesystem DSL macro with literal combining.
@@ -60,28 +69,29 @@ Released 2019-08-09
 
 ## v0.2.0
 
-Released 2019-08-08
+Released 2019-08-09
 
 #### Added
 - All missing traits needed for feature-parity with `PathBuf`
 
 ## v0.1.1
 
-Released 2019-08-08
+Released 2019-08-09
 
 #### Added
 - Added link docs.rs link to crates.io page
 
 ## v0.1.0
 
-Released 2019-08-08
+Released 2019-08-09
 
 #### Added
 - First release of `path-dsl`, a rust library for path construction.
 
 ## Diffs
 
-- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.0...HEAD)
+- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.1...HEAD)
+- [v0.5.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.0...v0.5.1)
 - [v0.5.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.4.0...v0.5.0)
 - [v0.4.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.3.0...v0.4.0)
 - [v0.3.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.2.0...v0.3.0)
