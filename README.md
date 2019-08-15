@@ -36,7 +36,7 @@ path.push("file.txt");
 
 ## PathDSL Macro
 
-Compare with PathDSL's [`path!`](https://docs.rs/path-dsl/0.4.0/path_dsl/macro.path.html) macro (note the use of `|` instead of `/` due to rust's macro rules).
+Compare with PathDSL's [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro (note the use of `|` instead of `/` due to rust's macro rules).
 PathDSL is a drop-in replacement for PathBuf and is easily and cheaply convertible back and forth. This
 macro has a couple optimizations over just using the PathDSL class manually, described later. It is
 recommended to always use the macro when using the DSL.
@@ -155,11 +155,11 @@ func(dsl.into_pathbuf());
 
 As previously mentioned, the macro contains some optimizations over using raw `PathDSL` and should always
 be used over manually using PathDSL. These optimizations happen at compile time, and are guaranteed.
-Further details on these can be found on the [`path!`](https://docs.rs/path-dsl/0.4.0/path_dsl/macro.path.html) macro documentation.
+Further details on these can be found on the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro documentation.
 
 **String Literal Concatenation:**
 
-While it is ill-advised to use string literals with slashes in a `Path`, The [`path!`](https://docs.rs/path-dsl/0.4.0/path_dsl/macro.path.html) macro
+While it is ill-advised to use string literals with slashes in a `Path`, The [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro
 takes slashes into account, and automatically constructs a single string literal from multiple
 consecutive string literals. This can potentially save an allocation or two in the underlying
 `OsString`.
@@ -177,9 +177,9 @@ if cfg!(windows) {
 
 **First-Argument Optimization:**
 
-When the very first argument of the [`path!`](https://docs.rs/path-dsl/0.4.0/path_dsl/macro.path.html) macro is a owning `PathBuf`, `OsString` or `PathDSL`
+When the very first argument of the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro is a owning `PathBuf`, `OsString` or `PathDSL`
 passed by value (moved), instead of copying everything into a new `PathDSL`, it will just steal the
-buffer from that moved-in value. This allows you to use the [`path!`](https://docs.rs/path-dsl/0.4.0/path_dsl/macro.path.html) macro fearlessly when appending
+buffer from that moved-in value. This allows you to use the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro fearlessly when appending
 to already existing variables.
 
 ```rust
@@ -192,7 +192,7 @@ let p = path!(first); // Does not copy anything.
 ## Known Issues
 
 Due to my mitigation of a [rustc bug](https://github.com/rust-lang/rust/issues/63460) there may be
-issues when renaming `path_dsl` crate and using the [`path!`](https://docs.rs/path-dsl/0.4.0/path_dsl/macro.path.html) macro. I currently have not have experienced this,
+issues when renaming `path_dsl` crate and using the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro. I currently have not have experienced this,
 but if it happens, please report an issue and I'll add it to the documentation.
 
 ## Why Use A Crate?
