@@ -1,3 +1,4 @@
+use more_asserts::*;
 use path_dsl::{path, PathDSL};
 use std::borrow::Cow;
 use std::ffi::{OsStr, OsString};
@@ -65,10 +66,10 @@ fn gen_cow_osstr(p: &str) -> Cow<OsStr> {
 
 macro_rules! partial_ord_test {
     (owned, $lhs:expr, $rhs:expr) => {
-        assert!($lhs < $rhs)
+        assert_le!($lhs, $rhs)
     };
     (unowned, $lhs:expr, $rhs:expr) => {
-        assert!($lhs < *$rhs)
+        assert_le!($lhs, *$rhs)
     };
     ($(constructor: $constructor:path,)? $(converter: ($($conv:tt)+),)? name: $name:ident, $ownage:tt) => {
         paste::item!{
