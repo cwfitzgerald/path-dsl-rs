@@ -62,3 +62,35 @@ fn gen_cow_path(p: &str) -> Cow<Path> {
 fn gen_cow_osstr(p: &str) -> Cow<OsStr> {
     Cow::from(OsStr::new(p))
 }
+
+macro_rules! partial_ord_test {
+    (owned, $lhs:expr, $rhs:expr) => {
+        assert!($lhs < $rhs)
+    };
+    (unowned, $lhs:expr, $rhs:expr) => {
+        assert!($lhs < *$rhs)
+    };
+    ($(constructor: $constructor:path,)? $(converter: ($($conv:tt)+),)? name: $name:ident, $ownage:tt) => {
+        paste::item!{
+            #[allow(unused)]
+            #[test]
+            fn [<partial_ord_ $name>]() {
+                let lhs = PathDSL::from("aaaaa");
+
+                let mut first = $($constructor)?("zzzzz");
+                let second = $($($conv)+)?(first);
+
+                partial_ord_test!($ownage, lhs, second);
+            }
+        }
+    };
+}
+
+partial_ord_test!(constructor: OsStr::new, name: osstr, unowned);
+partial_ord_test!(constructor: OsString::from, name: osstring, owned);
+partial_ord_test!(constructor: Path::new, name: path, unowned);
+partial_ord_test!(constructor: PathBuf::from, name: pathbuf, owned);
+partial_ord_test!(constructor: PathDSL::from, name: dsl, owned);
+partial_ord_test!(constructor: gen_box_path, name: box_path, unowned);
+partial_ord_test!(constructor: gen_cow_path, name: cow_path, owned);
+partial_ord_test!(constructor: gen_cow_osstr, name: cow_osstr, owned);
