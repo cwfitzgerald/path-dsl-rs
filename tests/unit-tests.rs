@@ -1,3 +1,8 @@
+//! Why are these unit tests not in the `lib.rs` file? Because of my mitigation of
+//! a [rustc bug](https://github.com/rust-lang/rust/issues/63460), I manually use the full
+//! path to some of my macros. This means I cannot call the macro within my own module.
+//! Therefore, I have to bring the unit tests out to where the integration tests normally are.
+
 use more_asserts::*;
 use path_dsl::{path, PathDSL};
 use std::borrow::Cow;

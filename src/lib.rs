@@ -6,6 +6,8 @@
 //! this is significantly more terse, it has cross platform issues
 //! because of the slash use in the string. Enter PathDSL.
 //!
+//! PathDSL is a single file, dependency-less, well tested crate, made for ease of use and performance.
+//!
 //! ### **Incorrect:** String
 //!
 //! This is an easy but incorrect way of creating a path.
@@ -249,8 +251,8 @@
 //!
 //! With this in mind, I have made `path_dsl` completely dependency free, choosing to lean on declarative
 //! macros over proc macros as to not depend on things like `syn`. Additionally, everything is contained within
-//! this one file, and I have added `#[deny(unsafe_code)]` for good measure. Hopefully this makes this crate light
-//! enough and easily-auditable enough to be an acceptable dependency.
+//! this one file, I have thorough tests, and I have added `#[deny(unsafe_code)]` for good measure.
+//! Hopefully this makes this crate light enough and easily-auditable enough to be an acceptable dependency.
 
 #![allow(clippy::cognitive_complexity)]
 #![allow(clippy::float_cmp)]
@@ -1256,8 +1258,8 @@ macro_rules! path_impl {
 /// The macro is a fairly simple forwarding macro that just matches against the `|` syntax specified
 /// and forwards it on to the `Div` based implementation. However it does do some small optimizations,
 /// including the use of a hidden type called `CopylessDSL` which allows for the
-/// no-copy-on-first-argument-move optimization be guarenteed. A single `/` operation on `CopylessDSL` immediately
-/// produces a `PathDSL` always.
+/// zero-copy optimization be guarenteed. A single `/` operation on `CopylessDSL` always
+/// produces a `PathDSL`.
 ///
 /// Some example expansions (on a unix-like system):
 ///

@@ -8,6 +8,8 @@ use a raw string or a formatted string to express that. While
 this is significantly more terse, it has cross platform issues
 because of the slash use in the string. Enter PathDSL.
 
+PathDSL is a single file, dependency-less, well tested crate, made for ease of use and performance.
+
 #### **Incorrect:** String
 
 This is an easy but incorrect way of creating a path.
@@ -204,7 +206,7 @@ to go implement this crate. There is a surprising amount of very tedious and par
 
 With this in mind, I have made `path_dsl` completely dependency free, choosing to lean on declarative
 macros over proc macros as to not depend on things like `syn`. Additionally, everything is contained within
-this one file, and I have added `#[deny(unsafe_code)]` for good measure. Hopefully this makes this crate light
-enough and easily-auditable enough to be an acceptable dependency.
+this one file, I have thorough tests, and I have added `#[deny(unsafe_code)]` for good measure.
+Hopefully this makes this crate light enough and easily-auditable enough to be an acceptable dependency.
 
 License: MIT
