@@ -6,6 +6,8 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [Unreleased](#unreleased)
+- [v0.5.0](#v050)
+- [v0.4.0](#v040)
 - [v0.3.0](#v030)
 - [v0.2.0](#v020)
 - [v0.1.1](#v011)
@@ -13,6 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Diffs](#diffs)
 
 ## Unreleased
+
+## v0.5.0
+
+#### Added
+- Implemented CopylessDSL
+- Added missing `From<Cow<OsStr>>` for `PathDSL`
+- Documentation for all member functions
+- Many tests
+
+#### Fixed
+- Properly handle &mut
+- Documentation links now always point to newest version
 
 ## v0.4.0
 
@@ -63,7 +77,8 @@ Released 2019-08-08
 
 ## Diffs
 
-- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.4.0...HEAD)
+- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.0...HEAD)
+- [v0.5.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.4.0...v0.5.0)
 - [v0.4.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.3.0...v0.4.0)
 - [v0.3.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.2.0...v0.3.0)
 - [v0.2.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.1.1...v0.2.0)
