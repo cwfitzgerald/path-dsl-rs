@@ -9,14 +9,14 @@ repository = "https://github.com/cwfitzgerald/path-dsl-rs"
 description = "A utility DSL and macro to help deal with Paths and PathBufs."
 documentation = "https://docs.rs/path-dsl/"
 readme = "README.md"
+keywords = ["path", "dsl", "utility"]
+categories = ["development-tools"]
 
 exclude = [
     ".gitignore",
     ".rustfmt.toml",
     "tests/*",
 ]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 

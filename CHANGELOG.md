@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Added
 - Badges to Readme
+- Keywords on crates.io
+- Categories on crates.io
 
 ## v0.5.3
 
