@@ -6,6 +6,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [Unreleased](#unreleased)
+- [v0.5.3](#v053)
 - [v0.5.2](#v052)
 - [v0.5.1](#v051)
 - [v0.5.0](#v050)
@@ -17,6 +18,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Diffs](#diffs)
 
 ## Unreleased
+
+## v0.5.3
+
+Released 2019-08-25
+
+#### Fixed
+- Inconsequential documentation link issue
 
 ## v0.5.2
 
@@ -98,7 +106,8 @@ Released 2019-08-09
 
 ## Diffs
 
-- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.2...HEAD)
+- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.3...HEAD)
+- [v0.5.3](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.2...v0.5.3)
 - [v0.5.2](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.1...v0.5.2)
 - [v0.5.1](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.0...v0.5.1)
 - [v0.5.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.4.0...v0.5.0)
