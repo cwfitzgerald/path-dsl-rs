@@ -1,4 +1,4 @@
-//! DSL PathBuf Wrapper and Macro for easy creation of paths.
+//! Utility DSL and macro to help deal with Paths.
 //!
 //! PathDSL provides a simple and zero-overhead abstraction for creating
 //! paths and appending to existing `Path`-like things.
