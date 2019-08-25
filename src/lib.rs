@@ -1285,7 +1285,7 @@ macro_rules! path_impl {
 
 /// Efficient macro for creating a `PathDSL`.
 ///
-/// General usage documentation is available at the [crate root](index.html#pathdsl-macro). The following is
+/// General usage documentation is available at the [crate root](index.html). The following is
 /// documentation of the optimizations made and internal implementation details.
 ///
 /// # Expansion
