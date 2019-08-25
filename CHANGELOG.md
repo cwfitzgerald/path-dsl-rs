@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+#### Changed
+- Documentation rewrite to make it more user friendly.
+
 ## v0.5.1
 
 Released 2019-08-15

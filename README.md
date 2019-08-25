@@ -2,46 +2,52 @@
 
 DSL PathBuf Wrapper and Macro for easy creation of paths.
 
-PathBuf (and Path) give us a cross platform way to handle paths,
-but when you are creating part a path, you often want to
-use a raw string or a formatted string to express that. While
-this is significantly more terse, it has cross platform issues
-because of the slash use in the string. Enter PathDSL.
+PathDSL provides a simple and zero-overhead abstraction for creating
+paths and appending to existing `Path`-like things.
 
-PathDSL is a single file, dependency-less, well tested crate, made for ease of use and performance.
-
-#### **Incorrect:** String
-
-This is an easy but incorrect way of creating a path.
+## Overview
 
 ```rust
-use std::path::PathBuf;
-// Fails on windows when put onto the end of an absolute path
-let path = PathBuf::from("dir1/dir2/dir3/file.txt");
+use path_dsl::{path, PathDSL};
+
+// PathBuf::push() only called once with consecutive literals:
+let literals: PathDSL = path!("dir1" | "dir2" | "dir3");
+// Type annotation for illustration purposes; not needed
+
+// Does not copy data if first path segment is a owning value:
+let moving = path!(literals | "dir4");
+
+// Mixing and matching is easy:
+let start = path!("some" | "dir");
+let end = path!("my_folder" | "my_file.txt");
+// Can borrow as normal
+let result = path!(start | "middle_folder" | &end);
+
+// Works with PathBuf, Path, and String-likes
+let file = Path::new("file.txt");
+let folder = PathBuf::from("folder");
+let middle: &str = "other_middle";
+let combined = path!(folder | middle | "middle_folder" | file);
+
+// Usable like a PathBuf
+let mut empty = path!();
+empty.push("folder");
+
+// Free conversions to/from a PathBuf
+fn pathbuf_function(p: PathDSL) -> PathBuf {
+    // Into converts to/from all types that PathBuf.into() does
+    path!(p | "file.txt").into()
+}
+let non_empty: PathDSL = pathbuf_function(empty).into();
 ```
 
-#### PathBuf API
+## PathDSL Macro and Type
 
-This is a correct but extremely verbose and mutable way of creating a path.
-It is possible to mitigate the mutability by making a mutable path inside a block
-and then assigning the result of the block to an immutable variable, but that increases
-the amount of code.
+PathDSL's [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro allows for the creation of the type `PathDSL` in the most efficent way possible in the situation.
+PathDSL is a drop-in replacement for PathBuf and is easily and cheeply convertable back and forth. This
+macro has a couple optimizations over just using the PathDSL class manually, described later.
 
-```rust
-use std::path::PathBuf;
-let mut path = PathBuf::new();
-path.push("dir1");
-path.push("dir2");
-path.push("dir3");
-path.push("file.txt");
-```
-
-## PathDSL Macro
-
-Compare with PathDSL's [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro (note the use of `|` instead of `/` due to rust's macro rules).
-PathDSL is a drop-in replacement for PathBuf and is easily and cheaply convertible back and forth. This
-macro has a couple optimizations over just using the PathDSL class manually, described later. It is
-recommended to always use the macro when using the DSL.
+note the use of `|` instead of `/` due to rust's macro rules
 
 ```rust
 use path_dsl::{path, PathDSL};
@@ -73,8 +79,8 @@ use path_dsl::{path, PathDSL};
 let other = PathBuf::from("some_dir");
 let filename: &str = "my_file.txt";
 
-let path = PathDSL::from("dir1") / "dir2" / &other / filename;
-let mac  = path!("dir1" | "dir2" | other | filename);
+let mac  = path!("dir1" | "dir2" | &other | filename); // Preferred
+let path = PathDSL::from("dir1") / "dir2" / other / filename; // Also works
 ```
 
 #### Moving vs Borrowing
@@ -93,28 +99,24 @@ use path_dsl::{path, PathDSL};
 let value = PathBuf::from("some_dir");
 let borrow: &str = "my_file.txt";
 
-let path = PathDSL::new() / value / borrow;
-let mac  = path!(value | borrow); // Will not compile because `value` was moved
+let mac  = path!(value | borrow);
+let path = PathDSL::new() / value / borrow; // Will not compile because `value` was moved
 ```
 
 You must manually borrow it:
 
 ```rust
-use path_dsl::{path, PathDSL};
-
-let value = PathBuf::from("some_dir");
-let borrow: &str = "my_file.txt";
-
-let path = PathDSL::new() / &value / borrow; // Borrow value so it can be used later
-let mac  = path!(value | borrow); // Not used afterwards, so doesn't need a borrow
+let mac  = path!(&value | borrow); // Borrow value so it can be used later
+let path = PathDSL::new() / value / borrow; // Not used afterwards, so doesn't need a borrow
 ```
 
 #### PathDSL <=> PathBuf
 
 `PathDSL` is designed to be a drop-in replacement for `PathBuf`, including trivial conversions
 between the two. In any situation where you would be able to use `PathBuf` you can use
-`PathDSL`. However there are some situations where you must have a `PathBuf`. Obtaining it
-is trivial through dereferencing or through the `PathDSL::into_pathbuf` function.
+`PathDSL`. `PathDSL` includes an implementation of `Deref` to a `PathBuf` (and by proxy `Path`) and re-implements all functions that take `self`, so is fully api compatable.
+However there are some situations where you must have a `PathBuf`.
+Obtaining a `&PathBuf` is trivial through dereferencing and obtaining a `PathBuf` is possible through the [`PathDSL::into_pathbuf`](https://docs.rs/path-dsl/*/path_dsl/struct.PathDSL.html#method.into_pathbuf) function.
 
 PathDSL is `#[repr(transparent)]` over `PathBuf` and all functions are force-inlined so
 conversions and operations should be cost-free compared to the equivalent `PathBuf` operation.
@@ -150,7 +152,7 @@ func(buf);
 // Must convert into `PathBuf`
 // Dereferencing doesn't work because `func` moves.
 func(dsl.into_pathbuf());
-// func(dsl.into()) also works
+func(dsl.into()) // also works
 ```
 
 #### Macro Optimizations
@@ -181,21 +183,22 @@ if cfg!(windows) {
 
 When the very first argument of the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro is a owning `PathBuf`, `OsString` or `PathDSL`
 passed by value (moved), instead of copying everything into a new `PathDSL`, it will just steal the
-buffer from that moved-in value. This allows you to use the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro fearlessly when appending
-to already existing variables.
+buffer from that moved-in value. This allows you to use the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro fearlessly when
+appending to already existing variables.
 
 ```rust
 use path_dsl::path;
 
 let first = PathBuf::from("a_very_long_folder_name");
 let p = path!(first); // Does not copy anything.
+
 ```
 
 ## Known Issues
 
 Due to my mitigation of a [rustc bug](https://github.com/rust-lang/rust/issues/63460) there may be
-issues when renaming `path_dsl` crate and using the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro. I currently have not have experienced this,
-but if it happens, please report an issue and I'll add it to the documentation.
+issues when renaming `path_dsl` crate and using the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro. I currently have not have
+experienced this, but if it happens, please report an issue and I'll add it to the documentation.
 
 ## Why Use A Crate?
 
