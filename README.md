@@ -1,5 +1,9 @@
 # path-dsl
 
+[![Latest version](https://img.shields.io/crates/v/path-dsl.svg)](https://crates.io/crates/path-dsl)
+[![Documentation](https://docs.rs/path-dsl/badge.svg)](https://docs.rs/path-dsl)
+![License](https://img.shields.io/crates/l/path-dsl.svg)
+
 Utility DSL and macro to help deal with Paths.
 
 PathDSL provides a simple and zero-overhead abstraction for creating
