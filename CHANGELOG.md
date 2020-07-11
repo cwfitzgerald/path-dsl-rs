@@ -6,6 +6,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [Unreleased](#unreleased)
+- [v0.6.0](#v060)
 - [v0.5.4](#v054)
 - [v0.5.3](#v053)
 - [v0.5.2](#v052)
@@ -19,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Diffs](#diffs)
 
 ## Unreleased
+
+## v0.6.0
+
+Released 2020-07-11
 
 #### Added
 - Converted macro to output PathBuf directly
@@ -120,7 +125,8 @@ Released 2019-08-09
 
 ## Diffs
 
-- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.4...HEAD)
+- [Unreleased](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.6.0...HEAD)
+- [v0.6.0](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.4...v0.6.0)
 - [v0.5.4](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.3...v0.5.4)
 - [v0.5.3](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.2...v0.5.3)
 - [v0.5.2](https://github.com/cwfitzgerald/path-dsl-rs/compare/v0.5.1...v0.5.2)
