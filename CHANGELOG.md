@@ -6,6 +6,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - [Unreleased](#unreleased)
+- [v0.6.1](#v061)
 - [v0.6.0](#v060)
 - [v0.5.4](#v054)
 - [v0.5.3](#v053)
@@ -20,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Diffs](#diffs)
 
 ## Unreleased
+
+## v0.6.1
+
+Released 2020-07-11
+
+#### Fixed
+- Updated readme for v0.6.0 release
 
 ## v0.6.0
 
