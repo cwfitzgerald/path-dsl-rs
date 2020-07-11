@@ -12,10 +12,11 @@ paths and appending to existing `Path`-like things.
 ## Overview
 
 ```rust
-use path_dsl::{path, PathDSL};
+use path_dsl::path;
+# use std::path::{PathBuf, Path};
 
 // PathBuf::push() only called once with consecutive literals:
-let literals: PathDSL = path!("dir1" | "dir2" | "dir3");
+let literals: PathBuf = path!("dir1" | "dir2" | "dir3");
 // Type annotation for illustration purposes; not needed
 
 // Does not copy data if first path segment is a owning value:
@@ -32,36 +33,25 @@ let file = Path::new("file.txt");
 let folder = PathBuf::from("folder");
 let middle: &str = "other_middle";
 let combined = path!(folder | middle | "middle_folder" | file);
-
-// Usable like a PathBuf
-let mut empty = path!();
-empty.push("folder");
-
-// Free conversions to/from a PathBuf
-fn pathbuf_function(p: PathDSL) -> PathBuf {
-    // Into converts to/from all types that PathBuf.into() does
-    path!(p | "file.txt").into()
-}
-let non_empty: PathDSL = pathbuf_function(empty).into();
 ```
 
 ## PathDSL Macro and Type
 
-PathDSL's [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro allows for the creation of the type `PathDSL` in the most efficent way possible in the situation.
-PathDSL is a drop-in replacement for PathBuf and is easily and cheeply convertable back and forth. This
-macro has a couple optimizations over just using the PathDSL class manually, described later.
+PathDSL's [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro allows for the creation of a `PathBuf` in the most efficent way possible in the situation.
 
 note the use of `|` instead of `/` due to rust's macro rules
 
 ```rust
-use path_dsl::{path, PathDSL};
+use path_dsl::path;
 // Type annotation for illustration only, not needed
-let path: PathDSL = path!("dir1" | "dir2" | "dir3" | "file.txt");
+let path: PathBuf = path!("dir1" | "dir2" | "dir3" | "file.txt");
 ```
 
 #### PathDSL
 
-You can also generate a PathDSL directly, though this is discouraged.
+You can also generate a PathDSL directly, though this is discouraged. PathDSL will pretend to be
+a `PathBuf` as best it can, but it is almost always more efficent to use the `path!` macro to generate
+a `PathBuf` directly.
 
 ```rust
 use path_dsl::PathDSL;
@@ -83,8 +73,8 @@ use path_dsl::{path, PathDSL};
 let other = PathBuf::from("some_dir");
 let filename: &str = "my_file.txt";
 
-let mac  = path!("dir1" | "dir2" | &other | filename); // Preferred
-let path = PathDSL::from("dir1") / "dir2" / other / filename; // Also works
+let mac: PathBuf  = path!("dir1" | "dir2" | &other | filename); // Preferred
+let path: PathDSL = PathDSL::from("dir1") / "dir2" / other / filename; // Also works
 ```
 
 #### Moving vs Borrowing
@@ -97,14 +87,14 @@ for rust, infix operators are normally used with `Copy` types, so this may be **
 Both mutable and immutable borrows are supported, though they will never actually mutate anything.
 
 ```rust,compile_fail
-use path_dsl::{path, PathDSL};
+use path_dsl::path;
 # use std::path::PathBuf;
 
 let value = PathBuf::from("some_dir");
 let borrow: &str = "my_file.txt";
 
 let mac  = path!(value | borrow);
-let path = PathDSL::new() / value / borrow; // Will not compile because `value` was moved
+let path = path!(value | borrow); // Will not compile because `value` was moved
 ```
 
 You must manually borrow it:
@@ -155,7 +145,7 @@ let buf = PathBuf::from("file.txt");
 func(buf);
 // Must convert into `PathBuf`
 // Dereferencing doesn't work because `func` moves.
-func(dsl.into_pathbuf());
+func(dsl.to_path_buf());
 func(dsl.into()) // also works
 ```
 
@@ -195,14 +185,7 @@ use path_dsl::path;
 
 let first = PathBuf::from("a_very_long_folder_name");
 let p = path!(first); // Does not copy anything.
-
 ```
-
-## Known Issues
-
-Due to my mitigation of a [rustc bug](https://github.com/rust-lang/rust/issues/63460) there may be
-issues when renaming `path_dsl` crate and using the [`path!`](https://docs.rs/path-dsl/*/path_dsl/macro.path.html) macro. I currently have not have
-experienced this, but if it happens, please report an issue and I'll add it to the documentation.
 
 ## Why Use A Crate?
 
