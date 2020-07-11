@@ -1,10 +1,5 @@
-//! Why are these unit tests not in the `lib.rs` file? Because of my mitigation of
-//! a [rustc bug](https://github.com/rust-lang/rust/issues/63460), I manually use the full
-//! path to some of my macros. This means I cannot call the macro within my own module.
-//! Therefore, I have to bring the unit tests out to where the integration tests normally are.
-
+use crate::{path, PathDSL};
 use more_asserts::*;
-use path_dsl::{path, PathDSL};
 use std::borrow::Cow;
 use std::ffi::{OsStr, OsString};
 use std::path::{Path, PathBuf};
@@ -64,10 +59,10 @@ owned_dsl_test!(constructor: gen_cow_osstr, name: arc_osstr);
 fn gen_box_path(p: &str) -> Box<Path> {
     Box::from(Path::new(p))
 }
-fn gen_cow_path(p: &str) -> Cow<Path> {
+fn gen_cow_path(p: &str) -> Cow<'_, Path> {
     Cow::from(Path::new(p))
 }
-fn gen_cow_osstr(p: &str) -> Cow<OsStr> {
+fn gen_cow_osstr(p: &str) -> Cow<'_, OsStr> {
     Cow::from(OsStr::new(p))
 }
 
@@ -146,5 +141,5 @@ into_test!(type: PathDSL, name: dsl);
 into_test!(type: Box<Path>, name: box_path);
 into_test!(type: Arc<Path>, name: arc_path);
 into_test!(type: Rc<Path>, name: rc_path);
-into_test!(type: Cow<Path>, converter: (&), name: cow_path);
-into_test!(type: Cow<OsStr>, converter: (&), name: cow_osstr);
+into_test!(type: Cow<'_, Path>, converter: (&), name: cow_path);
+into_test!(type: Cow<'_, OsStr>, converter: (&), name: cow_osstr);

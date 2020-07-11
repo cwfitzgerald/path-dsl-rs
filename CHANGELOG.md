@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+#### Added
+- Converted macro to output PathBuf directly
+- Discouraged manual use of PathDSL
+
 ## v0.5.4
 
 Released 2019-08-25

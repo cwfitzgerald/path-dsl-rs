@@ -6,11 +6,11 @@
 //! # Overview
 //!
 //! ```rust
-//! use path_dsl::{path, PathDSL};
+//! use path_dsl::path;
 //! # use std::path::{PathBuf, Path};
 //!
 //! // PathBuf::push() only called once with consecutive literals:
-//! let literals: PathDSL = path!("dir1" | "dir2" | "dir3");
+//! let literals: PathBuf = path!("dir1" | "dir2" | "dir3");
 //! // Type annotation for illustration purposes; not needed
 //!
 //! // Does not copy data if first path segment is a owning value:
@@ -49,38 +49,18 @@
 //! # combined_pb.push("middle_folder");
 //! # combined_pb.push("file.txt");
 //! # assert_eq!(combined, combined_pb);
-//!
-//! // Usable like a PathBuf
-//! let mut empty = path!();
-//! empty.push("folder");
-//! # let mut empty_pb = PathBuf::new();
-//! # empty_pb.push("folder");
-//! # assert_eq!(empty, empty_pb);
-//!
-//! // Free conversions to/from a PathBuf
-//! fn pathbuf_function(p: PathDSL) -> PathBuf {
-//!     // Into converts to/from all types that PathBuf.into() does
-//!     path!(p | "file.txt").into()
-//! }
-//! let non_empty: PathDSL = pathbuf_function(empty).into();
-//! # let mut non_empty_pb = PathBuf::new();
-//! # non_empty_pb.push("folder");
-//! # non_empty_pb.push("file.txt");
-//! # assert_eq!(non_empty, non_empty_pb);
 //! ```
 //!
 //! # PathDSL Macro and Type
 //!
-//! PathDSL's [`path!`](macro.path.html) macro allows for the creation of the type `PathDSL` in the most efficent way possible in the situation.
-//! PathDSL is a drop-in replacement for PathBuf and is easily and cheeply convertable back and forth. This
-//! macro has a couple optimizations over just using the PathDSL class manually, described later.
+//! PathDSL's [`path!`](macro.path.html) macro allows for the creation of a `PathBuf` in the most efficent way possible in the situation.
 //!
 //! note the use of `|` instead of `/` due to rust's macro rules
 //!
 //! ```rust
-//! use path_dsl::{path, PathDSL};
+//! use path_dsl::path;
 //! // Type annotation for illustration only, not needed
-//! let path: PathDSL = path!("dir1" | "dir2" | "dir3" | "file.txt");
+//! let path: PathBuf = path!("dir1" | "dir2" | "dir3" | "file.txt");
 //!
 //! # use std::path::PathBuf;
 //! # let mut path2 = PathBuf::new();
@@ -93,7 +73,9 @@
 //!
 //! ### PathDSL
 //!
-//! You can also generate a PathDSL directly, though this is discouraged.
+//! You can also generate a PathDSL directly, though this is discouraged. PathDSL will pretend to be
+//! a `PathBuf` as best it can, but it is almost always more efficent to use the `path!` macro to generate
+//! a `PathBuf` directly.
 //!
 //! ```rust
 //! use path_dsl::PathDSL;
@@ -123,8 +105,8 @@
 //! let other = PathBuf::from("some_dir");
 //! let filename: &str = "my_file.txt";
 //!
-//! let mac  = path!("dir1" | "dir2" | &other | filename); // Preferred
-//! let path = PathDSL::from("dir1") / "dir2" / other / filename; // Also works
+//! let mac: PathBuf  = path!("dir1" | "dir2" | &other | filename); // Preferred
+//! let path: PathDSL = PathDSL::from("dir1") / "dir2" / other / filename; // Also works
 //!
 //! # use std::path::PathBuf;
 //! # let mut path2 = PathBuf::new();
@@ -146,14 +128,14 @@
 //! Both mutable and immutable borrows are supported, though they will never actually mutate anything.
 //!
 //! ```rust,compile_fail
-//! use path_dsl::{path, PathDSL};
+//! use path_dsl::path;
 //! # use std::path::PathBuf;
 //!
 //! let value = PathBuf::from("some_dir");
 //! let borrow: &str = "my_file.txt";
 //!
 //! let mac  = path!(value | borrow);
-//! let path = PathDSL::new() / value / borrow; // Will not compile because `value` was moved
+//! let path = path!(value | borrow); // Will not compile because `value` was moved
 //! ```
 //!
 //! You must manually borrow it:
@@ -176,6 +158,9 @@
 //! ```
 //!
 //! ### PathDSL <=> PathBuf
+//!
+//! **The PathDSL type is not meant to be used directly, but exists to allow the macro to work.
+//! It was once intended to be directly used, so it ratains this functionality.**
 //!
 //! `PathDSL` is designed to be a drop-in replacement for `PathBuf`, including trivial conversions
 //! between the two. In any situation where you would be able to use `PathBuf` you can use
@@ -219,7 +204,7 @@
 //! func(buf);
 //! // Must convert into `PathBuf`
 //! // Dereferencing doesn't work because `func` moves.
-//! func(dsl.into_pathbuf());
+//! func(dsl.to_path_buf());
 //! # let dsl = path!("file.txt");
 //! func(dsl.into()) // also works
 //! ```
@@ -267,12 +252,6 @@
 //! # assert_eq!(p, dup);
 //! ```
 //!
-//! # Known Issues
-//!
-//! Due to my mitigation of a [rustc bug](https://github.com/rust-lang/rust/issues/63460) there may be
-//! issues when renaming `path_dsl` crate and using the [`path!`](macro.path.html) macro. I currently have not have
-//! experienced this, but if it happens, please report an issue and I'll add it to the documentation.
-//!
 //! # Why Use A Crate?
 //!
 //! You may be wondering why you should use a crate for this when you can easily wrap `PathBuf` and
@@ -304,6 +283,9 @@ use std::path::{Iter, Path, PathBuf};
 use std::rc::Rc;
 use std::str::FromStr;
 use std::sync::Arc;
+
+#[cfg(test)]
+mod tests;
 
 /// A PathBuf wrapper that has support for a Path DSL.
 ///
@@ -1077,6 +1059,13 @@ impl Into<PathDSL> for CopylessDSL {
     }
 }
 
+impl Into<PathBuf> for CopylessDSL {
+    #[inline(always)]
+    fn into(self) -> PathBuf {
+        PathBuf::new()
+    }
+}
+
 impl Div<PathDSL> for CopylessDSL {
     type Output = PathDSL;
 
@@ -1186,8 +1175,7 @@ macro_rules! separator {
 #[macro_export]
 macro_rules! concat_separator {
     ( $e:literal, $($other:literal),+ ) => {
-        // Working around https://github.com/rust-lang/rust/issues/63460
-        concat!($e, path_dsl::separator!(), path_dsl::concat_separator!($($other),+))
+        concat!($e, $crate::separator!(), $crate::concat_separator!($($other),+))
     };
     ( $e:literal ) => {
         $e
@@ -1283,7 +1271,7 @@ macro_rules! path_impl {
     };
 }
 
-/// Efficient macro for creating a `PathDSL`.
+/// Efficient macro for creating a `PathBuf`.
 ///
 /// General usage documentation is available at the [crate root](index.html). The following is
 /// documentation of the optimizations made and internal implementation details.
@@ -1300,10 +1288,11 @@ macro_rules! path_impl {
 ///
 /// ```rust
 /// # use path_dsl::{CopylessDSL, PathDSL, path};
+/// # use std::path::PathBuf;
 /// # let ret1 =
 /// path!("concat" | "optimization");
 /// # let res2 =
-/// Into::<PathDSL>::into(CopylessDSL::new() / "concat/optimization");
+/// Into::<PathBuf>::into(CopylessDSL::new() / "concat/optimization");
 /// # assert_eq!(ret1, res2);
 /// ```
 ///
@@ -1316,7 +1305,7 @@ macro_rules! path_impl {
 /// path!(owning_path | "concat" | "optimization");
 /// # let owning_path = PathBuf::new();
 /// # let res2 =
-/// Into::<PathDSL>::into(CopylessDSL::new() / owning_path / "concat/optimization");
+/// Into::<PathBuf>::into(CopylessDSL::new() / owning_path / "concat/optimization");
 /// # assert_eq!(ret1, res2);
 /// ```
 ///
@@ -1329,7 +1318,7 @@ macro_rules! path_impl {
 /// path!("concat" | "optimization" | owning_path | "other_thing");
 /// # let owning_path = PathBuf::new();
 /// # let res2 =
-/// Into::<PathDSL>::into(CopylessDSL::new() / "concat/optimization" / owning_path / "other_thing");
+/// Into::<PathBuf>::into(CopylessDSL::new() / "concat/optimization" / owning_path / "other_thing");
 /// # assert_eq!(ret1, res2);
 /// ```
 ///
@@ -1381,7 +1370,7 @@ macro_rules! path_impl {
 #[macro_export]
 macro_rules! path {
     ( $($other:tt)* ) => {
-         ::std::convert::Into::<$crate::PathDSL>::into($crate::path_impl!( @($crate::CopylessDSL::new())@ $($other)* ));
+         ::std::convert::Into::<std::path::PathBuf>::into($crate::path_impl!( @($crate::CopylessDSL::new())@ $($other)* ));
     };
     () => {  $crate::PathDSL::new() };
 }
